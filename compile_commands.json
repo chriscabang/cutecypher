@@ -1,0 +1,21 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-std=c99",
+      "-Wall",
+      "-Wextra",
+      "-O3",
+      "-march=native",
+      "-I/Users/chriscabang/Workspace/cute-cypher/include",
+      "-fPIC",
+      "-c",
+      "-o",
+      "/Users/chriscabang/Workspace/cute-cypher/lib/libcutecypher.o",
+      "src/cutecypher.c"
+    ],
+    "directory": "/Users/chriscabang/Workspace/cute-cypher",
+    "file": "/Users/chriscabang/Workspace/cute-cypher/src/cutecypher.c",
+    "output": "/Users/chriscabang/Workspace/cute-cypher/lib/libcutecypher.o"
+  }
+]

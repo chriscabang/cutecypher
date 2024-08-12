@@ -1,0 +1,6 @@
+**/*.DS_Store
+**/*.o
+.cache/
+bin/
+lib/
+
