@@ -1,4 +1,4 @@
-#include "cutecypher.h"
+#include "cute_sha512.h"
 
 #ifdef CUTECYPHER_CPP
 namespace CUTECYPHER_CPP {
@@ -25,12 +25,12 @@ static void cute_memcpy(void *dst, const void *src, size_t n) {
     *d++ = *s++;
 }
 
-static void *cute_memset(void *dst, int c, size_t n) {
-  uint8_t *d = (uint8_t *)dst;
-  while (n--)
-    *d++ = c;
-  return dst;
-}
+// static void *cute_memset(void *dst, int c, size_t n) {
+//   uint8_t *d = (uint8_t *)dst;
+//   while (n--)
+//     *d++ = c;
+//   return dst;
+// }
 
 static const uint64_t H[8] = {0x6a09e667f3bcc908, 0xbb67ae8584caa73b,
                               0x3c6ef372fe94f82b, 0xa54ff53a5f1d36f1,
@@ -70,7 +70,6 @@ static void cute_sha512_transform(cute_sha512_ctx *ctx, const uint8_t *data) {
   uint64_t W[80];
   uint64_t a, b, c, d, e, f, g, h;
   uint64_t T1, T2;
-  // uint64_t M[16];
   size_t i, j;
 
   for (i = 0, j = 0; i < 16; i++, j += 8)
@@ -79,7 +78,7 @@ static void cute_sha512_transform(cute_sha512_ctx *ctx, const uint8_t *data) {
            ((uint64_t)data[j + 4] << 24) | ((uint64_t)data[j + 5] << 16) |
            ((uint64_t)data[j + 6] << 8) | ((uint64_t)data[j + 7]);
 
-  for (/*i = 16*/; i < 80; i++)
+  for (; i < 80; i++)
     W[i] = s1(W[i - 2]) + W[i - 7] + s0(W[i - 15]) + W[i - 16];
 
   a = ctx->h[0];
@@ -175,36 +174,6 @@ void cute_sha512_final(cute_sha512_ctx *ctx, uint8_t hash[64]) {
   len_bytes[0] = (bit_len_high >> 56) & 0xff;
 
   cute_sha512_update(ctx, len_bytes, 16);
-
-  //   size_t len = ctx->len;
-  //   uint8_t *p = ctx->data + len;
-  //   *p++ = 0x80;
-  //
-  //   if (len >= 112) {
-  //     cute_memset(p, 0, 128 - len - 1);
-  //     cute_sha512_transform(ctx, ctx->data);
-  //     len = 0;
-  //   }
-  //
-  //   cute_memset(ctx->data + len + 1, 0, 119 - len);
-  //   ctx->data[112] = (uint8_t) ctx->Nh >> 56;
-  //   ctx->data[113] = (uint8_t) ctx->Nh >> 48;
-  //   ctx->data[114] = (uint8_t) ctx->Nh >> 40;
-  //   ctx->data[115] = (uint8_t) ctx->Nh >> 32;
-  //   ctx->data[116] = (uint8_t) ctx->Nh >> 24;
-  //   ctx->data[117] = (uint8_t) ctx->Nh >> 16;
-  //   ctx->data[118] = (uint8_t) ctx->Nh >> 8;
-  //   ctx->data[119] = (uint8_t) ctx->Nh;
-  //   ctx->data[120] = (uint8_t) ctx->Nl >> 56;
-  //   ctx->data[121] = (uint8_t) ctx->Nl >> 48;
-  //   ctx->data[122] = (uint8_t) ctx->Nl >> 40;
-  //   ctx->data[123] = (uint8_t) ctx->Nl >> 32;
-  //   ctx->data[124] = (uint8_t) ctx->Nl >> 24;
-  //   ctx->data[125] = (uint8_t) ctx->Nl >> 16;
-  //   ctx->data[126] = (uint8_t) ctx->Nl >> 8;
-  //   ctx->data[127] = (uint8_t) ctx->Nl;
-  //
-  //   cute_sha512_transform(ctx, ctx->data);
 
   for (int i = 0; i < 8; i++) {
     hash[i * 8 + 0] = (uint8_t)(ctx->h[i] >> 56) & 0xff;

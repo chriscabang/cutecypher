@@ -1,20 +1,21 @@
 PROJECT   := cutecypher
 VERSION   := 1.0.0
-TARGET    := lib$(PROJECT)
 
 ROOT      := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
-SRC       := $(wildcard src/*.c)
 INCLUDE   := $(ROOT)/include
-LIB       := $(ROOT)/lib
-BIN       := $(ROOT)/bin
-TESTS     := $(ROOT)/tests
+SRCS      := $(wildcard src/*.c)
+TESTS     := $(wildcard tests/*.c)
+TARGETS   := $(basename $(notdir $(SRCS)))
+BUILD_DIR := $(ROOT)/build
+LIB_DIR   := $(BUILD_DIR)/lib
+LIB_NAME  := $(LIB_DIR)/lib$(PROJECT)
 
-# DEBUG			:= 1
+# DEBUG     := 1
 
 CC        := gcc -std=c99
 AR        := ar
 
-CFLAGS    += -Wall -Wextra -O3 -march=native
+CFLAGS    += -pedantic -Wall -Wextra -O3 -march=native
 CFLAGS    += -I$(INCLUDE)
 LDFLAGS   += -shared -Wl -o 
 
@@ -22,37 +23,40 @@ ifdef DEBUG
 	CFLAGS  += -DDEBUG=$(DEBUG)
 endif
 
+$(info SRCS are $(SRCS))
+$(info TARGETS are $(TARGETS))
+
 .DEFAULT_GOAL = library
 
 prerequisites:
-	mkdir -p $(LIB)
+	mkdir -p $(LIB_DIR)
 
 $(CC): prerequisites
 
 test.o: $(TESTS)/main.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(BIN)/test: test.o $(LIB)/$(TARGET).a
+$(BIN)/test: test.o $(TARGETS).a
 	mkdir -p $(BIN)
 	$(CC) $^ -o $@
 
-$(LIB)/$(TARGET).o: $(SRC) $(CC)
+$(TARGETS).o: $(SRCS) $(CC)
 	$(CC) $(CFLAGS) -fPIC -c -o $@ $<
 
-$(LIB)/$(TARGET).a: $(LIB)/$(TARGET).o
+$(LIB_NAME).a: $(TARGETS).o
 	$(AR) cr $@ $<
 
-$(LIB)/$(TARGET).so: $(LIB)/$(TARGET).o
-	$(CC) $(CFLAGS) $(LDFLAGS) $@.$(VERSION) $<
-	ln -sf `basename $@.$(VERSION)` $@
+$(LIB_NAME).so.$(VERSION): $(TARGETS).o
+	$(CC) $(CFLAGS) $(LDFLAGS) $@ $<
+	ln -sf $@ $(LIB_NAME).so
 
 .PHONY: all library test clean
 
 all: library test prerequisites
 
-library: $(LIB)/$(TARGET).a $(LIB)/$(TARGET).so
+library: $(LIB_NAME).a $(LIB_NAME).so.$(VERSION)
 test: $(BIN)/test
 
 clean:
-	rm -rf $(LIB) $(BIN)
-	rm -rf *.out
+	rm -rf $(BUILD_DIR)
+	rm -rf *.o
