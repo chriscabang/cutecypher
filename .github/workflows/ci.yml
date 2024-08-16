@@ -1,0 +1,24 @@
+name: cute CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        id: checkout
+        uses: actions/checkout@v2
+
+      - name: Make
+        id: make
+        run: make clean && make -j4
+
+      - name: Test
+        id: test
+        run: echo "run tests"

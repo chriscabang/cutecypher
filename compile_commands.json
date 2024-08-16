@@ -3,19 +3,20 @@
     "arguments": [
       "/usr/bin/gcc",
       "-std=c99",
+      "-pedantic",
       "-Wall",
       "-Wextra",
       "-O3",
       "-march=native",
-      "-I/Users/chriscabang/Workspace/cute-cypher/include",
+      "-I/Users/chriscabang/Workspace/cutecypher/include",
       "-fPIC",
       "-c",
       "-o",
-      "/Users/chriscabang/Workspace/cute-cypher/lib/libcutecypher.o",
-      "src/cutecypher.c"
+      "cute_sha512.o",
+      "src/cute_sha512.c"
     ],
-    "directory": "/Users/chriscabang/Workspace/cute-cypher",
-    "file": "/Users/chriscabang/Workspace/cute-cypher/src/cutecypher.c",
-    "output": "/Users/chriscabang/Workspace/cute-cypher/lib/libcutecypher.o"
+    "directory": "/Users/chriscabang/Workspace/cutecypher",
+    "file": "/Users/chriscabang/Workspace/cutecypher/src/cute_sha512.c",
+    "output": "/Users/chriscabang/Workspace/cutecypher/cute_sha512.o"
   }
 ]

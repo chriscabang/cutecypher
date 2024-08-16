@@ -23,7 +23,7 @@ void cute_sha512_init(cute_sha512_ctx *c);
 
 void cute_sha512_update(cute_sha512_ctx *c, const uint8_t *data, size_t len);
 
-void cute_sha512_final(cute_sha512_ctx *c, uint8_t *hash);
+void cute_sha512_final(cute_sha512_ctx *c, uint8_t hash[64]);
 
 #ifdef __cplusplus
 }
