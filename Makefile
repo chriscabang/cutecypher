@@ -17,7 +17,7 @@ AR        := ar
 
 CFLAGS    += -pedantic -Wall -Wextra -O3 -march=native
 CFLAGS    += -I$(INCLUDE)
-LDFLAGS   += -shared -Wl -o 
+LDFLAGS   += -shared 
 
 ifdef DEBUG 
 	CFLAGS  += -DDEBUG=$(DEBUG)
@@ -47,7 +47,7 @@ $(LIB_NAME).a: $(TARGETS).o
 	$(AR) cr $@ $<
 
 $(LIB_NAME).so.$(VERSION): $(TARGETS).o
-	$(CC) $(CFLAGS) $(LDFLAGS) $@ $<
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<
 	ln -sf $@ $(LIB_NAME).so
 
 .PHONY: all library test clean
