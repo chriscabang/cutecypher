@@ -18,5 +18,23 @@
     "directory": "/Users/chriscabang/Workspace/cutecypher",
     "file": "/Users/chriscabang/Workspace/cutecypher/src/cute_sha512.c",
     "output": "/Users/chriscabang/Workspace/cutecypher/cute_sha512.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-std=c99",
+      "-Wall",
+      "-Wextra",
+      "-g",
+      "-I/Users/chriscabang/Workspace/cutecypher/include",
+      "-I./tests",
+      "-c",
+      "-o",
+      "kat.o",
+      "tests/kat.c"
+    ],
+    "directory": "/Users/chriscabang/Workspace/cutecypher",
+    "file": "/Users/chriscabang/Workspace/cutecypher/tests/kat.c",
+    "output": "/Users/chriscabang/Workspace/cutecypher/kat.o"
   }
 ]
