@@ -43,18 +43,18 @@ int kat_sha512(const char *message, const char *expected_hash) {
   return hashcmp(expected, hash, 64);
 }
 
-static void kat_test() {
+static int kat_test() {
+  int res = 0;
   size_t n = sizeof(kats) / sizeof(kats[0]);
   for (int i = 0; i < (int)n; i++) {
     struct Hash hash = find_hash(kats[i].version);
     for (int t = 0; t < TESTCOUNT; t++) {
       if (!kats[i].operation(hash.v[t].input, hash.v[t].expected)) {
-        printf ("test failed\n");
-      } else {
-        printf("test passed\n");
+        res = 1;
       }
     }
   }
+  return res;
 }
 
 int main() {
