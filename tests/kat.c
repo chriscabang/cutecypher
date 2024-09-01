@@ -3,17 +3,16 @@
 #include <string.h>
 
 #include "cute_sha512.h"
-#include "vectors.h"
 #include "utils.h"
+#include "vectors.h"
 
-int kat_sha512(const char *message, const char *expected_hash);
+int kat_sha512(const char *message, const char *salt,
+               const char *expected_hash);
 
 struct known_answer_tests {
   enum SHAfamily version;
-  int (*operation)(const char *, const char *);
-} kats[] = {
-  { SHA512, kat_sha512 }
-};
+  int (*operation)(const char *, const char *, const char *);
+} kats[] = {{SHA512, kat_sha512}};
 
 int hashcmp(const uint8_t *hash1, const uint8_t *hash2, size_t hash_len) {
   int res = 1;
@@ -25,17 +24,21 @@ int hashcmp(const uint8_t *hash1, const uint8_t *hash2, size_t hash_len) {
   return res; // Hashes are equal
 }
 
-int kat_sha512(const char *message, const char *expected_hash) {
+int kat_sha512(const char *message, const char *salt,
+               const char *expected_hash) {
   uint8_t hash[SHA512length];
   cute_sha512_ctx ctx;
 
   cute_sha512_init(&ctx);
-  cute_sha512_update(&ctx, (const uint8_t *) message, strlen(message));
+  cute_sha512_update_with_salt(&ctx, (const uint8_t *)message, strlen(message),
+                               (const uint8_t *)salt, salt != 0 ? strlen(salt) : 0);
+  // cute_sha512_update(&ctx, (const uint8_t *) message, strlen(message));
   cute_sha512_final(&ctx, hash);
 
   // Print the results
   printf("Input: %s\nExpected: %s\n", message, expected_hash);
-  printf("Received: "); printh(hash);
+  printf("Received: ");
+  printh(hash);
 
   uint8_t expected[64];
   hex_string_to_byte_array(expected_hash, expected, 64);
@@ -49,7 +52,8 @@ static int kat_test() {
   for (int i = 0; i < (int)n; i++) {
     struct Hash hash = find_hash(kats[i].version);
     for (int t = 0; t < TESTCOUNT; t++) {
-      if (!kats[i].operation(hash.v[t].input, hash.v[t].expected)) {
+      if (!kats[i].operation(hash.v[t].input, hash.v[t].salt,
+                             hash.v[t].expected)) {
         res = 1;
       }
     }
