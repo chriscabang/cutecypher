@@ -10,6 +10,14 @@ enum SHAfamily {
   SHA224 = 1, SHA256, SHA384, SHA512, SHA1, SHA2, SHA3
 };
 
+enum SHAlength {
+  SHA224length = 28,
+  SHA256length = 32,
+  SHA384length = 48,
+  SHA512length = 64,
+  SHA1length = 20
+};
+
 struct vector {
   const char *input;
   const char *expected;
@@ -25,7 +33,7 @@ struct Hash {
     0
   },
   {
-    SHA512, 64,
+    SHA512, SHA512length,
     { 
       {
         "abc",

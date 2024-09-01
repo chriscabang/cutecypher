@@ -26,7 +26,7 @@ int hashcmp(const uint8_t *hash1, const uint8_t *hash2, size_t hash_len) {
 }
 
 int kat_sha512(const char *message, const char *expected_hash) {
-  uint8_t hash[64];
+  uint8_t hash[SHA512length];
   cute_sha512_ctx ctx;
 
   cute_sha512_init(&ctx);
