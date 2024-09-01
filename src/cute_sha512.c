@@ -25,13 +25,6 @@ static void cute_memcpy(void *dst, const void *src, size_t n) {
     *d++ = *s++;
 }
 
-// static void *cute_memset(void *dst, int c, size_t n) {
-//   uint8_t *d = (uint8_t *)dst;
-//   while (n--)
-//     *d++ = c;
-//   return dst;
-// }
-
 static const uint64_t H[8] = {0x6a09e667f3bcc908, 0xbb67ae8584caa73b,
                               0x3c6ef372fe94f82b, 0xa54ff53a5f1d36f1,
                               0x510e527fade682d1, 0x9b05688c2b3e6c1f,
@@ -118,6 +111,13 @@ void cute_sha512_init(cute_sha512_ctx *ctx) {
   ctx->Nl = 0;
   ctx->Nh = 0;
   ctx->len = 0;
+}
+
+void cute_sha512_update_with_salt(cute_sha512_ctx *ctx, const uint8_t *data,
+                                  size_t len, const uint8_t *salt,
+                                  size_t salt_len) {
+  if (salt_len > 0) cute_sha512_update(ctx, salt, salt_len);
+  cute_sha512_update(ctx, data, len);
 }
 
 void cute_sha512_update(cute_sha512_ctx *ctx, const uint8_t *data, size_t len) {
