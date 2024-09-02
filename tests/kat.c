@@ -63,7 +63,6 @@ static int kat_test() {
 
 int main() {
 
-  kat_test();
+  return kat_test();
 
-  return 0;
 }
