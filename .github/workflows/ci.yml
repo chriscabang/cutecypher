@@ -27,3 +27,4 @@ jobs:
         id: test
         run: |
           ./build/kat
+          ./build/aet
