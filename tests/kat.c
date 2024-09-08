@@ -43,7 +43,7 @@ int kat_sha512(const char *message, const char *expected_hash) {
   return hashcmp(expected, hash, 64);
 }
 
-static int kat_test() {
+static int kat_test(void) {
   int res = 0;
   size_t n = sizeof(kats) / sizeof(kats[0]);
   for (int i = 0; i < (int)n; i++) {
@@ -57,7 +57,7 @@ static int kat_test() {
   return res;
 }
 
-int main() {
+int main(void) {
 
   return kat_test();
 
