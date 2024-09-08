@@ -12,12 +12,12 @@
       "-fPIC",
       "-c",
       "-o",
-      "cute_sha512.o",
+      "src/cute_sha512.o",
       "src/cute_sha512.c"
     ],
     "directory": "/Users/chriscabang/Workspace/cutecypher",
     "file": "/Users/chriscabang/Workspace/cutecypher/src/cute_sha512.c",
-    "output": "/Users/chriscabang/Workspace/cutecypher/cute_sha512.o"
+    "output": "/Users/chriscabang/Workspace/cutecypher/src/cute_sha512.o"
   },
   {
     "arguments": [
@@ -27,14 +27,30 @@
       "-Wextra",
       "-g",
       "-I/Users/chriscabang/Workspace/cutecypher/include",
-      "-I./tests",
       "-c",
       "-o",
-      "kat.o",
-      "tests/kat.c"
+      "tests/aet.o",
+      "tests//aet.c"
+    ],
+    "directory": "/Users/chriscabang/Workspace/cutecypher",
+    "file": "/Users/chriscabang/Workspace/cutecypher/tests/aet.c",
+    "output": "/Users/chriscabang/Workspace/cutecypher/tests/aet.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-std=c99",
+      "-Wall",
+      "-Wextra",
+      "-g",
+      "-I/Users/chriscabang/Workspace/cutecypher/include",
+      "-c",
+      "-o",
+      "tests/kat.o",
+      "tests//kat.c"
     ],
     "directory": "/Users/chriscabang/Workspace/cutecypher",
     "file": "/Users/chriscabang/Workspace/cutecypher/tests/kat.c",
-    "output": "/Users/chriscabang/Workspace/cutecypher/kat.o"
+    "output": "/Users/chriscabang/Workspace/cutecypher/tests/kat.o"
   }
 ]

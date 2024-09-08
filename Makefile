@@ -2,15 +2,18 @@ PROJECT   := cutecypher
 VERSION   := 1.0.0
 
 ROOT      := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
-INCLUDE   := $(ROOT)/include
-SRCS      := $(wildcard src/*.c)
-TARGET_SRC:= $(basename $(notdir $(SRCS)))
-TSTS      := $(wildcard tests/*.c)
-TARGET_TST:= $(basename $(notdir $(TSTS)))
+SRC       := $(wildcard src/*.c)
+OBJ       := $(SRC:.c=.o)
+LIBRARY   := lib$(PROJECT)
 
-BUILD_DIR := $(ROOT)/build
-LIB_DIR   := $(BUILD_DIR)/lib
-LIB_NAME  := $(LIB_DIR)/lib$(PROJECT)
+INCLUDE   := $(ROOT)/include
+BUILD     := $(ROOT)/build
+
+LIBPATH   := $(BUILD)/lib
+
+TEST_SRC  := $(wildcard tests/*.c)
+TEST_OBJ  := $(TEST_SRC:.c=.o)
+TESTS      := $(basename $(TEST_SRC:.c=))
 
 # DEBUG     := 1
 
@@ -27,40 +30,36 @@ endif
 
 .DEFAULT_GOAL = library
 
-# $(info SRCS is $(SRCS))
-# $(info TSTS is $(TSTS))
-# $(info TARGET_SRC is $(TARGET_SRC))
-# $(info TARGET_TST is $(TARGET_TST))
-
 prerequisites:
-	mkdir -p $(LIB_DIR)
+	mkdir -p $(BUILD)/lib
 
 $(CC): prerequisites
+$(BUILD): $(CC)
 
-$(TARGET_TST).o: $(TSTS)
-	$(CC)  -Wall -Wextra -g -I$(INCLUDE) -I./tests -c -o $@ $<
+$(TEST_OBJ): 
+	$(CC) -Wall -Wextra -g -I$(INCLUDE) -c -o $@ $(dir $@)/$(basename $(notdir $@)).c
 
-$(BUILD_DIR)/$(TARGET_TST): $(TARGET_TST).o $(LIB_NAME).a
-	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@
+$(TESTS): $(LIBRARY).a $(TEST_OBJ)
+	$(CC) $@.o $(LIBPATH)/$< -o $(BUILD)/$(basename $(notdir $@))
 
-$(TARGET_SRC).o: $(SRCS) $(CC)
+%.o: %.c
 	$(CC) $(CFLAGS) -fPIC -c -o $@ $<
 
-$(LIB_NAME).a: $(TARGET_SRC).o
-	$(AR) cr $@ $<
+$(LIBRARY).a: $(OBJ)
+	$(AR) cr $(LIBPATH)/$@ $<
 
-$(LIB_NAME).so.$(VERSION): $(TARGET_SRC).o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<
-	ln -sf $@ $(LIB_NAME).so
+$(LIBRARY).so.$(VERSION): $(OBJ)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(LIBPATH)/$@ $<
+	ln -sf $(LIBPATH)/$@ $(LIBRARY).so
 
 .PHONY: all library test clean
 
-all: library test prerequisites
+all: library test 
 
-library: $(LIB_NAME).a $(LIB_NAME).so.$(VERSION)
-test: $(BUILD_DIR)/$(TARGET_TST)
+library: $(BUILD) $(LIBRARY).a $(LIBRARY).so.$(VERSION)
+test: $(BUILD) $(TESTS)
 
 clean:
-	rm -rf $(BUILD_DIR)
-	rm -rf *.o
+	find . -name "*.o" -type f -delete
+	find . -name "$(LIBRARY).so" -type l -delete
+	rm -rf $(BUILD)
