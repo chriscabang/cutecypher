@@ -1,12 +1,17 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "cute_sha512.h"
 
-int bit_diff_between(const uint8_t hash1[64], const uint8_t hash2[64]) {
+#define NUM_TESTS 10000
+#define BIT_SIZE  256
+
+int bit_diff_between(const uint8_t hash[64], const uint8_t __hash[64] /*, size_t size */) {
   int c = 0;
-  for (int i = 0; i < 64; i++) {
-    uint8_t d = hash1[i] ^ hash2[i];
+  for (size_t i = 0; i < 64; i++) {
+    uint8_t d = hash[i] ^ __hash[i];
     for (int j = 0; j < 8; j++) {
       if (d & (1 << j)) c++;
     }
@@ -14,29 +19,73 @@ int bit_diff_between(const uint8_t hash1[64], const uint8_t hash2[64]) {
   return c;
 }
 
-int avalanche_effect_test(const char *message) {
-  uint8_t hash1[64], hash2[64];
-  size_t len = strlen(message);
-
-  cute_sha512_ctx ctx;
-
-  cute_sha512_init(&ctx);
-  cute_sha512_update(&ctx, (const uint8_t *)message, strlen(message));
-  cute_sha512_final(&ctx, hash1);
-  
-  char __message[len + 1];
-  strcpy(__message, message);
-
-  __message[0] ^= 0x01;
-
-  cute_sha512_init(&ctx);
-  cute_sha512_update(&ctx, (const uint8_t *)message, strlen(message));
-  cute_sha512_final(&ctx, hash2);
-
-  return bit_diff_between(hash1, hash2);
+void generate_256bits_random(uint8_t *r) {
+  for (int i = 0; i < 32; i++) r[i] = rand() % 256;
 }
 
+void flip_bit(uint8_t *data, int bit_index) {
+  int byte_index = bit_index / 8;
+  int bit_in_byte = bit_index % 8;
+  data[byte_index] ^= (1 << bit_in_byte);
+}
+
+// int avalanche_effect_test(const char *message) {
+//   uint8_t hash[64], __hash[64];
+//   size_t len = strlen(message);
+// 
+//   cute_sha512_ctx ctx;
+// 
+//   cute_sha512_init(&ctx);
+//   cute_sha512_update(&ctx, (const uint8_t *)message, strlen(message));
+//   cute_sha512_final(&ctx, hash);
+//   
+//   char __message[len + 1];
+//   strcpy(__message, message);
+// 
+//   __message[0] ^= 0x01;
+// 
+//   cute_sha512_init(&ctx);
+//   cute_sha512_update(&ctx, (const uint8_t *)message, strlen(message));
+//   cute_sha512_final(&ctx, __hash);
+// 
+//   return bit_diff_between(hash, __hash);
+// }
+
 int main(void) {
-  avalanche_effect_test("abc");
+//  avalanche_effect_test("abc");
+  uint8_t original[32];
+  uint8_t modified[32];
+  uint8_t hash[64], __hash[64];
+
+  int histogram[513] = { 0 };
+
+  srand(time(0));
+
+  for (int i = 0; i < NUM_TESTS; i++) {
+    generate_256bits_random(original);
+    memcpy(modified, original, 32);
+    int random_bit = rand() % BIT_SIZE;
+    flip_bit(modified, random_bit);
+
+    // Perform hashing
+    cute_sha512_ctx ctx;
+
+    cute_sha512_init(&ctx);
+    cute_sha512_update(&ctx, (const uint8_t *) original, 32);
+    cute_sha512_final(&ctx, hash);
+
+    cute_sha512_init(&ctx);
+    cute_sha512_update(&ctx, (const uint8_t *) modified, 32);
+    cute_sha512_final(&ctx, __hash);
+
+    int diff = bit_diff_between(hash, __hash);
+
+    histogram[diff]++;
+  }
+
+  for (int i = 0; i <= 512; i++) {
+    if (histogram[i] > 0) printf ("%d bit difference: %d occurrences\n", i, histogram[i]);
+  }
+
   return 0;
 }

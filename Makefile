@@ -37,7 +37,7 @@ $(CC): prerequisites
 $(BUILD): $(CC)
 
 $(TEST_OBJ): 
-	$(CC) -Wall -Wextra -g -I$(INCLUDE) -c -o $@ $(dir $@)/$(basename $(notdir $@)).c
+	$(CC) -Wall -Wextra -g -I$(INCLUDE) -I./tests -c -o $@ $(dir $@)/$(basename $(notdir $@)).c
 
 $(TESTS): $(LIBRARY).a $(TEST_OBJ)
 	$(CC) $@.o $(LIBPATH)/$< -o $(BUILD)/$(basename $(notdir $@))
