@@ -29,30 +29,7 @@ void flip_bit(uint8_t *data, int bit_index) {
   data[byte_index] ^= (1 << bit_in_byte);
 }
 
-// int avalanche_effect_test(const char *message) {
-//   uint8_t hash[64], __hash[64];
-//   size_t len = strlen(message);
-// 
-//   cute_sha512_ctx ctx;
-// 
-//   cute_sha512_init(&ctx);
-//   cute_sha512_update(&ctx, (const uint8_t *)message, strlen(message));
-//   cute_sha512_final(&ctx, hash);
-//   
-//   char __message[len + 1];
-//   strcpy(__message, message);
-// 
-//   __message[0] ^= 0x01;
-// 
-//   cute_sha512_init(&ctx);
-//   cute_sha512_update(&ctx, (const uint8_t *)message, strlen(message));
-//   cute_sha512_final(&ctx, __hash);
-// 
-//   return bit_diff_between(hash, __hash);
-// }
-
 int main(void) {
-//  avalanche_effect_test("abc");
   uint8_t original[32];
   uint8_t modified[32];
   uint8_t hash[64], __hash[64];
@@ -67,7 +44,6 @@ int main(void) {
     int random_bit = rand() % BIT_SIZE;
     flip_bit(modified, random_bit);
 
-    // Perform hashing
     cute_sha512_ctx ctx;
 
     cute_sha512_init(&ctx);
